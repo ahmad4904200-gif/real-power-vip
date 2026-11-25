@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ur">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Muhammad Gulzar - GET LINKS</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Arial,sans-serif}
+body{background:#f2f2f2;padding-bottom:80px}
+.header{background:#fff;padding:15px;display:flex;align-items:center;gap:12px;box-shadow:0 2px 5px #ddd;position:sticky;top:0;z-index:10}
+.logo{width:50px;height:50px;background:#6a1b9a;color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:bold}
+.header h2{font-size:18px}
+.header p{font-size:12px;color:#666}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:15px}
+.card{background:#fff;border-radius:12px;padding:15px;box-shadow:0 2px 5px #ddd}
+.card small{color:#666;font-size:12px}
+.card h1{font-size:26px;margin:5px 0}
+.card span{font-size:12px}
+.green{color:green}.red{color:red}.orange{color:#ff9800}.blue{color:#2196f3}
+.menu{padding:0 15px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.btn{background:#fff;border:none;border-radius:12px;padding:18px 10px;box-shadow:0 2px 5px #ddd;cursor:pointer;font-size:14px;font-weight:bold}
+.btn small{display:block;font-weight:normal;color:#666;font-size:11px;margin-top:4px}
+.btn.active{background:#e8f5e9}
+.list{padding:15px}
+.item{background:#fff;border-radius:10px;padding:12px;margin-bottom:10px;display:flex;justify-content:space-between;box-shadow:0 1px 3px #ddd}
+.item b{font-size:14px}
+.item p{font-size:12px;color:#666}
+.badge{padding:5px 10px;border-radius:20px;font-size:11px;font-weight:bold;color:#fff}
+.bg-red{background:#e53935}.bg-green{background:#43a047}
+input{width:100%;padding:12px;border:1px solid #ddd;border-radius:10px;margin:10px 0}
+.bottom{position:fixed;bottom:0;left:0;right:0;background:#fff;display:flex;justify-content:space-around;padding:12px;box-shadow:0 -2px 5px #ddd}
+.bottom button{border:none;background:none;font-size:13px;cursor:pointer}
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">M</div>
+  <div><h2>Muhammad Gulzar</h2><p>GET LINKS</p></div>
+  <div style="margin-left:auto;text-align:right"><b id="todayDate"></b><br><small>Recovery System</small></div>
+</div>
+
+<div id="page-dashboard">
+  <div class="grid">
+    <div class="card"><small>Total Customers</small><h1 id="total">0</h1><span class="blue">● All Users</span></div>
+    <div class="card"><small>Paid Customers</small><h1 class="green" id="paid">0</h1><span class="green">● Paid</span></div>
+    <div class="card"><small>Pending Payments</small><h1 class="red" id="pending">0</h1><span class="red">● Pending</span></div>
+    <div class="card"><small>Active Packages</small><h1 id="activePkg">0</h1><span class="orange">● Active</span></div>
+  </div>
+  <div class="menu">
+    <button class="btn" onclick="showPage('customers')">👥 Customers<small>All Users List</small></button>
+    <button class="btn" onclick="showPage('recovery')">🔴 Recovery<small>25 Date - Red List</small></button>
+    <button class="btn" onclick="showPage('payments')">💰 Payments<small>Paid / Pending</small></button>
+    <button class="btn" onclick="showPage('promises')">🤝 Promises<small>Waday Walay</small></button>
+    <button class="btn" onclick="document.getElementById('csvFile').click()">📁 CSV Import<small>File Upload Karain</small></button>
+    <button class="btn" onclick="showPage('reports')">📊 Reports<small>Daily Report</small></button>
+    <button class="btn" onclick="showPage('workers')">👷 Workers<small>Staff</small></button>
+    <button class="btn" onclick="showPage('settings')">⚙️ Settings<small>Setting</small></button>
+  </div>
+  <div class="list"><h3 style="margin-bottom:10px">Aaj Expire Honay Walay / 25 Date</h3><div id="todayList"></div></div>
+  <input type="file" id="csvFile" accept=".csv" class="hidden" onchange="loadCSV(event)">
+</div>
+
+<div id="page-customers" class="hidden">
+  <div class="list"><h3>Customers - <span id="custCount"></span></h3>
+  <input placeholder="🔍 Search Name / Username..." onkeyup="searchUser(this.value,'allList')">
+  <div id="allList"></div></div>
+</div>
+
+<div id="page-recovery" class="hidden">
+  <div class="list"><h3 style="color:red">🔴 Recovery - 25 Date Walay (Red)</h3><div id="redList"></div>
+  <h3 style="color:green;margin-top:20px">🟢 Baqi - Green</h3><div id="greenList"></div></div>
+</div>
+
+<div id="page-payments" class="hidden"><div class="list"><h3>Payments</h3><div id="payList"></div></div></div>
+<div id="page-promises" class="hidden"><div class="list"><h3>Promises - Kal Dunga Walay</h3><p style="margin:10px 0;color:#666">Yahan waday walay user add karain</p><input id="promiseInput" placeholder="Username likhain..."><button class="btn" style="width:100%;background:#43a047;color:#fff" onclick="addPromise()">+ Promise Add Karain</button><div id="promiseList" style="margin-top:15px"></div></div></div>
+<div id="page-reports" class="hidden"><div class="list"><h3>Reports</h3><p id="reportText" style="margin-top:10px;line-height:25px"></p><button class="btn" style="width:100%;background:#2196f3;color:#fff" onclick="window.print()">🖨️ Report Print / Save</button></div></div>
+<div id="page-workers" class="hidden"><div class="list"><h3>Workers</h3><p>Worker 1 - Recovery<br>Worker 2 - New Connection<br>Worker 3 - Complaint</p></div></div>
+<div id="page-settings" class="hidden"><div class="list"><h3>Settings</h3><p>ISP Name: Muhammad Gulzar<br>Brand: GET LINKS<br>CSV: Auto Import On<br>Color: Red = 25 Date, Green = Baqi</p></div></div>
+
+<div class="bottom">
+  <button onclick="showPage('dashboard')">🏠 Home</button>
+  <button onclick="showPage('reports')">📊 Reports</button>
+  <button onclick="showPage('recovery')">🔔 Alerts</button>
+  <button onclick="alert('Logout ho gaya')">🚪 Logout</button>
+</div>
+
+<script>
+let users=[];
+document.getElementById('todayDate').innerText=new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'});
+function showPage(p){
+  ['dashboard','customers','recovery','payments','promises','reports','workers','settings'].forEach(x=>document.getElementById('page-'+x).classList.add('hidden'));
+  document.getElementById('page-'+p).classList.remove('hidden');
+  window.scrollTo(0,0);
+}
+function loadCSV(e){
+  let file=e.target.files[0]; let r=new FileReader();
+  r.onload=function(){
+    let lines=r.result.split('\n'); users=[];
+    for(let i=1;i<lines.length;i++){
+      let c=lines[i].split(','); if(c.length<2) continue;
+      let name=(c[0]||'').trim(); let user=(c[1]||c[0]||'').trim(); let exp=(c[2]||c[3]||'').trim();
+      if(!user) continue;
+      users.push({name:name, username:user, expiry:exp, phone:c[4]||''});
+    }
+    updateUI(); alert(users.length+' Users Load Ho Gaye ✅');
+  }; r.readAsText(file);
+}
+function is25(u){ return u.expiry.includes('25') || u.expiry.includes('25 Nov'); }
+function updateUI(){
+  let red=users.filter(is25); let green=users.filter(u=>!is25(u));
+  document.getElementById('total').innerText=users.length;
+  document.getElementById('paid').innerText=green.length;
+  document.getElementById('pending').innerText=red.length;
+  document.getElementById('activePkg').innerText=new Set(users.map(u=>u.expiry)).size;
+  document.getElementById('custCount').innerText=users.length+' Users';
+  renderList('allList',users); renderList('redList',red); renderList('greenList',green); renderList('payList',users); renderList('todayList',red.slice(0,5));
+  document.getElementById('reportText').innerHTML=`Total: ${users.length}<br>Paid (Green): ${green.length}<br>Pending / Recovery (Red 25 Date): ${red.length}<br>Date: ${new Date().toLocaleDateString()}`;
+}
+function renderList(id,list){
+  let el=document.getElementById(id); if(!el) return;
+  el.innerHTML=list.map((u,i)=>`<div class="item"><div><b>${u.username}</b><p>${u.name} • ${u.expiry}</p></div><span class="badge ${is25(u)?'bg-red':'bg-green'}">${is25(u)?'25 DATE':'PAID'}</span></div>`).join('')||'<p>Koi user nahi - CSV Import karain</p>';
+}
+function searchUser(v,id){ let f=users.filter(u=>u.username.toLowerCase().includes(v.toLowerCase())||u.name.toLowerCase().includes(v.toLowerCase())); renderList(id,f); }
+function addPromise(){ let v=document.getElementById('promiseInput').value; if(!v) return; document.getElementById('promiseList').innerHTML+=`<div class="item"><b>${v}</b><span>Promise</span></div>`; document.getElementById('promiseInput').value=''; }
+users=[
+ {name:'Asif',username:'yt.asifdumra',expiry:'25 Nov 2026'},
+ {name:'Ashraf',username:'yt.ashrafup',expiry:'25 Nov 2026'},
+ {name:'Mazhar',username:'yt.mazharlw',expiry:'25 Nov 2026'},
+ {name:'Ammar',username:'yt.ammarlw',expiry:'25 Nov 2026'},
+ {name:'Umar',username:'yt.umarbls',expiry:'25 Nov 2026'},
+ {name:'Ali',username:'yt.alimuhammadkw',expiry:'25 Nov 2026'},
+ {name:'Ahmed',username:'yt.ahmed',expiry:'05 Jan 2027'},
+ {name:'Bilal',username:'yt.bilal',expiry:'20 Mar 2027'},
+ {name:'Usman',username:'yt.usman',expiry:'22 Mar 2027'},
+ {name:'Hassan',username:'yt.hassan',expiry:'06 Feb 2027'},
+];
+updateUI();
+</script>
+</body>
+</html>
